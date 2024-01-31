@@ -1,9 +1,9 @@
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::sync::RwLock;
+use std::{sync::RwLock, thread, time};
 
 use notify_rust::Notification;
-use rdev::{listen, Event};
+use rdev::{listen, simulate, Event, EventType, Key};
 use state::InitCell;
 
 static STATE: InitCell<RwLock<CapsLockAutoSwitchState>> = InitCell::new();
@@ -62,9 +62,7 @@ fn key_pressed(string_key: String) {
     w_state.input.push_str(&string_key);
 }
 
-
 fn analyse_state() -> BufferStatus {
-
     let state = STATE.get().read().unwrap();
     println!("state: {}", state.input);
 
@@ -90,11 +88,30 @@ fn wrong_case_detected() {
 
     let state = STATE.get().read().unwrap();
 
+    correct_caps();
     Notification::new()
         .summary("Wrong case detected!")
         .body(format!("Are you sure about the case of this word : {}", state.input).as_str())
-        .icon("dialog-info")
+        .icon("dialog-information")
         .timeout(10000)
         .show()
         .unwrap();
+}
+
+fn correct_caps() {
+    println!("correct caps send event");
+    send(&EventType::KeyPress(Key::CapsLock));
+    send(&EventType::KeyRelease(Key::CapsLock));
+}
+
+fn send(event_type: &EventType) {
+    let delay = time::Duration::from_millis(20);
+    match simulate(event_type) {
+        Ok(()) => (),
+        Err(_simulate_error) => {
+            println!("We could not send {:?}", event_type);
+        }
+    }
+    // Let ths OS catchup (at least MacOS)
+    thread::sleep(delay);
 }
