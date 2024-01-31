@@ -1,6 +1,7 @@
 use regex::Regex;
 use std::sync::RwLock;
 
+use notify_rust::Notification;
 use rdev::{listen, Event};
 use state::InitCell;
 
@@ -41,12 +42,12 @@ fn callback(event: Event) {
             match analyse_state() {
                 BufferStatus::WordFinished => {
                     reset_buffer();
-                },
+                }
                 BufferStatus::WrongCapsDetected => {
                     wrong_case_detected();
-                },
+                    reset_buffer();
+                }
                 _ => (),
-                
             }
         }
         None => (),
@@ -54,8 +55,7 @@ fn callback(event: Event) {
 }
 
 fn key_pressed(string_key: String) {
-    let wr_state = STATE.get();
-    let mut w_state = wr_state.write().unwrap();
+    let mut w_state = STATE.get().write().unwrap();
     w_state.input.push_str(&string_key);
 }
 
@@ -86,5 +86,14 @@ fn reset_buffer() {
 
 fn wrong_case_detected() {
     println!("wrong case detected!");
-    reset_buffer();
+
+    let state = STATE.get().read().unwrap();
+
+    Notification::new()
+        .summary("Wrong case detected!")
+        .body(format!("Are you sure about the case of this word : {}", state.input).as_str())
+        .icon("dialog-warning")
+        .timeout(6000)
+        .show()
+        .unwrap();
 }
