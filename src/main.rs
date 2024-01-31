@@ -1,3 +1,4 @@
+use lazy_static::lazy_static;
 use regex::Regex;
 use std::sync::RwLock;
 
@@ -7,8 +8,10 @@ use state::InitCell;
 
 static STATE: InitCell<RwLock<CapsLockAutoSwitchState>> = InitCell::new();
 
-const WRONG_CAPS_DETECTION: &str = r"[a-z]{1}[A-Z]{2,} ";
-const NOT_WORD: &str = r"[^a-zA-Z]{1,}";
+lazy_static! {
+    static ref WRONG_CAPS_DETECTION: Regex = Regex::new(r"[a-z]{1}[A-Z]{2,} ").unwrap();
+    static ref NOT_WORD: Regex = Regex::new(r"[^a-zA-Z]{1,}").unwrap();
+}
 
 struct CapsLockAutoSwitchState {
     input: String,
@@ -59,20 +62,18 @@ fn key_pressed(string_key: String) {
     w_state.input.push_str(&string_key);
 }
 
+
 fn analyse_state() -> BufferStatus {
+
     let state = STATE.get().read().unwrap();
     println!("state: {}", state.input);
 
-    let re: Regex = Regex::new(WRONG_CAPS_DETECTION).unwrap();
-    if re.is_match(&state.input) {
-        return BufferStatus::WrongCapsDetected;
+    if WRONG_CAPS_DETECTION.is_match(&state.input) {
+        BufferStatus::WrongCapsDetected
+    } else if NOT_WORD.is_match(&state.input) {
+        BufferStatus::WordFinished
     } else {
-        let re: Regex = Regex::new(NOT_WORD).unwrap();
-        if re.is_match(&state.input) {
-            return BufferStatus::WordFinished;
-        } else {
-            return BufferStatus::NothingSpecial;
-        }
+        BufferStatus::NothingSpecial
     }
 }
 
@@ -92,8 +93,8 @@ fn wrong_case_detected() {
     Notification::new()
         .summary("Wrong case detected!")
         .body(format!("Are you sure about the case of this word : {}", state.input).as_str())
-        .icon("dialog-warning")
-        .timeout(6000)
+        .icon("dialog-info")
+        .timeout(10000)
         .show()
         .unwrap();
 }

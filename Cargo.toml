@@ -6,6 +6,7 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+lazy_static = "1.4.0"
 notify-rust = "4.10.0"
 rdev = "0.5.3"
 regex = "1.10.3"
