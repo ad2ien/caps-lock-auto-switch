@@ -1,0 +1,7 @@
+# caps lock config
+correct_caps_lock: true
+correct_suspicious_last_word: true
+display_warning: true
+
+# If everything is set to false,
+# consider uninstalling this package ..

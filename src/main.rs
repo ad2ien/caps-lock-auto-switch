@@ -1,16 +1,30 @@
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::{sync::RwLock, thread, time};
+use std::{env, path::PathBuf, sync::RwLock, thread, time};
 
 use notify_rust::Notification;
 use rdev::{listen, simulate, Event, EventType, Key};
 use state::InitCell;
+mod config;
 
 static STATE: InitCell<RwLock<CapsLockAutoSwitchState>> = InitCell::new();
 
 lazy_static! {
     static ref WRONG_CAPS_DETECTION: Regex = Regex::new(r"[a-z]{1}[A-Z]{2,} ").unwrap();
     static ref NOT_WORD: Regex = Regex::new(r"[^a-zA-Z]{1,}").unwrap();
+    #[derive(Debug)]
+    static ref CURRENT_EXE: PathBuf = match env::current_exe() {
+             Ok(exe_path) => exe_path,
+             Err(_e) => PathBuf::from(""),
+         };
+    static ref CONFIG: config::Config = match config::get_config() {
+        Ok(cfg) => cfg,
+        Err(_) => {
+            print!("Error loading config, using default");
+            config::Config::default()
+        }
+    };
+
 }
 
 struct CapsLockAutoSwitchState {
@@ -25,6 +39,13 @@ enum BufferStatus {
 
 fn main() {
     println!("Start Caps-Lock Auto Switch!");
+    println!(
+        "Current exe: {}",
+        match CURRENT_EXE.to_str() {
+            Some(s) => s,
+            None => "unknown",
+        }
+    );
 
     let state = CapsLockAutoSwitchState {
         input: String::new(),
@@ -88,9 +109,27 @@ fn wrong_case_detected() {
     let state = STATE.get().read().unwrap();
 
     correct_caps(state.input.clone());
+    do_notification(state);
+}
+
+fn do_notification(state: std::sync::RwLockReadGuard<'_, CapsLockAutoSwitchState>) {
+    let template_message = ": are you sure about the case of this word?";
+
+    let message = match CURRENT_EXE.to_str() {
+        Some(s) => {
+            format!(
+                "{}{}\nYou can change the settings there : {}/config.yaml",
+                state.input, template_message, s
+            )
+        }
+        None => {
+            format!("{}{}", template_message, state.input)
+        }
+    };
+
     Notification::new()
         .summary("Wrong case detected!")
-        .body(format!("Are you sure about the case of this word : {}", state.input).as_str())
+        .body(message.as_str())
         .icon("dialog-information")
         .timeout(10000)
         .show()
@@ -98,7 +137,10 @@ fn wrong_case_detected() {
 }
 
 fn correct_caps(problematic_word: String) {
-    println!("correct caps send event. problematic_word: {}", problematic_word);
+    println!(
+        "correct caps send event. problematic_word: {}",
+        problematic_word
+    );
 
     let mut first = true;
 
