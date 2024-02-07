@@ -1,0 +1,9 @@
+Package: capslock-auto-switch
+Version: 1.0
+Section: utils
+Priority: optional
+Architecture: amd64
+Maintainer: Adrien Touzouli <contact@ad2ien.dev>
+Description: Auto switch capslock
+  Listen to keyboard events, if a caps inversion is detected at the beginning of a sentence
+  caps lock is inverted and word is corrected.

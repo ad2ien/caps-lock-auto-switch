@@ -1,0 +1,6 @@
+#!/bin/bash
+echo "Post install script of capslock-auto-switch"
+echo "Enabling and starting the systemd service"
+systemctl --user daemon-reload
+systemctl --user enable capslock-auto-switch 
+systemctl --user start capslock-auto-switch                                                                                                                                                                                            
