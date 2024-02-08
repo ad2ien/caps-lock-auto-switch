@@ -27,8 +27,26 @@ lazy_static! {
 
 }
 
+struct SingleEvent {
+    key: Key,
+    character: char,
+}
+
 struct CapsLockAutoSwitchState {
-    input: String,
+    input: Vec<SingleEvent>,
+}
+
+impl CapsLockAutoSwitchState {
+    fn new() -> CapsLockAutoSwitchState {
+        CapsLockAutoSwitchState { input: Vec::new() }
+    }
+    fn to_string(&self) -> String {
+        let mut result = String::new();
+        self.input.iter().for_each(|event| {
+            result.push(event.character);
+        });
+        result
+    }
 }
 
 enum BufferStatus {
@@ -47,9 +65,7 @@ fn main() {
         }
     );
 
-    let state = CapsLockAutoSwitchState {
-        input: String::new(),
-    };
+    let state = CapsLockAutoSwitchState::new();
     STATE.set(RwLock::new(state));
 
     // This will block.
@@ -59,9 +75,9 @@ fn main() {
 }
 
 fn callback(event: Event) {
-    match event.name {
-        Some(string) => {
-            key_pressed(string);
+    match event.clone().name {
+        Some(_string) => {
+            key_pressed(event);
             match analyse_state() {
                 BufferStatus::WordFinished => {
                     reset_buffer();
@@ -77,18 +93,29 @@ fn callback(event: Event) {
     }
 }
 
-fn key_pressed(string_key: String) {
+fn key_pressed(event: Event) {
     let mut w_state = STATE.get().write().unwrap();
-    w_state.input.push_str(&string_key);
+    match event.event_type {
+        EventType::KeyPress(key) => {
+            let event = SingleEvent {
+                key: key,
+                character: event.name.unwrap().chars().next().unwrap(),
+            };
+            w_state.input.push(event);
+        }
+        EventType::KeyRelease(_) => (),
+        _ => (),
+    }
 }
 
 fn analyse_state() -> BufferStatus {
     let state = STATE.get().read().unwrap();
-    println!("state: {}", state.input);
+    let str_state = state.to_string();
+    println!("state: {}", str_state);
 
-    if WRONG_CAPS_DETECTION.is_match(&state.input) {
+    if WRONG_CAPS_DETECTION.is_match(&str_state) {
         BufferStatus::WrongCapsDetected
-    } else if NOT_WORD.is_match(&state.input) {
+    } else if NOT_WORD.is_match(&str_state) {
         BufferStatus::WordFinished
     } else {
         BufferStatus::NothingSpecial
@@ -108,22 +135,25 @@ fn wrong_case_detected() {
 
     let state = STATE.get().read().unwrap();
 
-    correct_caps(state.input.clone());
-    do_notification(state);
+    correct_caps(state);
+    do_notification();
 }
 
-fn do_notification(state: std::sync::RwLockReadGuard<'_, CapsLockAutoSwitchState>) {
+fn do_notification() {
+    let state = STATE.get().read().unwrap();
     let template_message = ": are you sure about the case of this word?";
 
     let message = match CURRENT_EXE.to_str() {
         Some(s) => {
             format!(
                 "{}{}\nYou can change the settings there : {}/config.yaml",
-                state.input, template_message, s
+                state.to_string(),
+                template_message,
+                s
             )
         }
         None => {
-            format!("{}{}", template_message, state.input)
+            format!("{}{}", template_message, state.to_string())
         }
     };
 
@@ -136,25 +166,21 @@ fn do_notification(state: std::sync::RwLockReadGuard<'_, CapsLockAutoSwitchState
         .unwrap();
 }
 
-fn correct_caps(problematic_word: String) {
+fn correct_caps(problematic_state: std::sync::RwLockReadGuard<'_, CapsLockAutoSwitchState>) {
     println!(
         "correct caps send event. problematic_word: {}",
-        problematic_word
+        problematic_state.to_string()
     );
 
     let mut first = true;
 
-    problematic_word.clone().chars().for_each(|_| {
+    for _ in 0..problematic_state.input.len() {
         send(&EventType::KeyPress(Key::Backspace));
         send(&EventType::KeyRelease(Key::Backspace));
-    });
+    }
 
-    problematic_word.clone().chars().for_each(|c| {
-        let key = char_to_key(c);
-        if key == Key::Alt {
-            println!("error finding key associated to char: {}", c);
-            return;
-        }
+    for key_tuple in problematic_state.input.iter() {
+        let key = key_tuple.key;
         send(&EventType::KeyPress(key));
         send(&EventType::KeyRelease(key));
 
@@ -163,7 +189,7 @@ fn correct_caps(problematic_word: String) {
             send(&EventType::KeyRelease(Key::CapsLock));
             first = false;
         }
-    });
+    }
 }
 
 fn send(event_type: &EventType) {
@@ -176,62 +202,4 @@ fn send(event_type: &EventType) {
     }
     // Let ths OS catchup (at least MacOS)
     thread::sleep(delay);
-}
-
-fn char_to_key(c: char) -> Key {
-    match c {
-        'a' => Key::KeyA,
-        'b' => Key::KeyB,
-        'c' => Key::KeyC,
-        'd' => Key::KeyD,
-        'e' => Key::KeyE,
-        'f' => Key::KeyF,
-        'g' => Key::KeyG,
-        'h' => Key::KeyH,
-        'i' => Key::KeyI,
-        'j' => Key::KeyJ,
-        'k' => Key::KeyK,
-        'l' => Key::KeyL,
-        'm' => Key::KeyM,
-        'n' => Key::KeyN,
-        'o' => Key::KeyO,
-        'p' => Key::KeyP,
-        'q' => Key::KeyQ,
-        'r' => Key::KeyR,
-        's' => Key::KeyS,
-        't' => Key::KeyT,
-        'u' => Key::KeyU,
-        'v' => Key::KeyV,
-        'w' => Key::KeyW,
-        'x' => Key::KeyX,
-        'y' => Key::KeyY,
-        'z' => Key::KeyZ,
-        'A' => Key::KeyA,
-        'B' => Key::KeyB,
-        'C' => Key::KeyC,
-        'D' => Key::KeyD,
-        'E' => Key::KeyE,
-        'F' => Key::KeyF,
-        'G' => Key::KeyG,
-        'H' => Key::KeyH,
-        'I' => Key::KeyI,
-        'J' => Key::KeyJ,
-        'K' => Key::KeyK,
-        'L' => Key::KeyL,
-        'M' => Key::KeyM,
-        'N' => Key::KeyN,
-        'O' => Key::KeyO,
-        'P' => Key::KeyP,
-        'Q' => Key::KeyQ,
-        'R' => Key::KeyR,
-        'S' => Key::KeyS,
-        'T' => Key::KeyT,
-        'U' => Key::KeyU,
-        'V' => Key::KeyV,
-        'W' => Key::KeyW,
-        'X' => Key::KeyX,
-        'Y' => Key::KeyY,
-        'Z' => Key::KeyZ,
-        _ => Key::Alt,
-    }
 }
