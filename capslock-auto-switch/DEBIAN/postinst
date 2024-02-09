@@ -1,6 +1,7 @@
 #!/bin/bash
+set -e
 echo "Post install script of capslock-auto-switch"
-echo "Enabling and starting the systemd service"
-systemctl --user daemon-reload
-systemctl --user enable capslock-auto-switch 
-systemctl --user start capslock-auto-switch                                                                                                                                                                                            
+echo "Enabling and starting service for "$SUDO_USER
+systemctl --machine=$SUDO_USER@ --user daemon-reload
+systemctl --machine=$SUDO_USER@ --user enable capslock-auto-switch 
+systemctl --machine=$SUDO_USER@ --user start capslock-auto-switch                                                                                                                                                                                            
