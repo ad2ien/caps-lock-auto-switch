@@ -1,17 +1,17 @@
 use lazy_static::lazy_static;
-use regex::Regex;
 use std::{env, path::PathBuf, sync::RwLock, thread, time};
 
 use notify_rust::Notification;
 use rdev::{listen, simulate, Event, EventType, Key};
+use buffer_process::{analyse_str_state, BufferStatus};
 use state::InitCell;
+
+mod buffer_process;
 mod config;
 
 static STATE: InitCell<RwLock<CapsLockAutoSwitchState>> = InitCell::new();
 
 lazy_static! {
-    static ref WRONG_CAPS_DETECTION: Regex = Regex::new(r"[a-z]{1}[A-Z]{2,} ").unwrap();
-    static ref NOT_WORD: Regex = Regex::new(r"[^a-zA-Z]{1,}").unwrap();
     #[derive(Debug)]
     static ref CURRENT_EXE: PathBuf = match env::current_exe() {
              Ok(exe_path) => exe_path,
@@ -47,12 +47,6 @@ impl CapsLockAutoSwitchState {
         });
         result
     }
-}
-
-enum BufferStatus {
-    NothingSpecial,
-    WordFinished,
-    WrongCapsDetected,
 }
 
 fn main() {
@@ -110,17 +104,10 @@ fn key_pressed(event: Event) {
 
 fn analyse_state() -> BufferStatus {
     let state = STATE.get().read().unwrap();
-    let str_state = state.to_string();
-    println!("state: {}", str_state);
-
-    if WRONG_CAPS_DETECTION.is_match(&str_state) {
-        BufferStatus::WrongCapsDetected
-    } else if NOT_WORD.is_match(&str_state) {
-        BufferStatus::WordFinished
-    } else {
-        BufferStatus::NothingSpecial
-    }
+    println!("state: {}", state.to_string());
+    analyse_str_state(state.to_string())
 }
+
 
 fn reset_buffer() {
     println!("reset buffer");
