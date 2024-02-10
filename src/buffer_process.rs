@@ -23,3 +23,19 @@ pub fn analyse_str_state(buffer: String) -> BufferStatus {
         BufferStatus::NothingSpecial
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    #[test]
+    fn test_analyse_str_state() {
+        let buffer = String::from("hELLO ");
+        assert_eq!(analyse_str_state(buffer), BufferStatus::WrongCapsDetected);
+
+        let buffer = String::from("Hello ");
+        assert_eq!(analyse_str_state(buffer), BufferStatus::WordFinished);
+
+        let buffer = String::from("Hello");
+        assert_eq!(analyse_str_state(buffer), BufferStatus::NothingSpecial);
+    }
+}
