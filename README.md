@@ -10,6 +10,7 @@ install libx11-dev  xorg-dev libxdo-dev
 
 - [ ] check install on a clean system with docker
 - [ ] only define project variable once : description version..
+- [ ] lower case has to be at the begining of a word CDcFCtdf triggers
 - [x] manage at least french keyboard
 - [ ] manage languages special charaters
 - [ ] Writre readme
