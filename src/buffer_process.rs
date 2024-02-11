@@ -2,7 +2,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 
 lazy_static! {
-    static ref WRONG_CAPS_DETECTION: Regex = Regex::new(r"[a-z]{1}[A-Z]{2,} ").unwrap();
+    static ref WRONG_CAPS_DETECTION: Regex = Regex::new(r"^[a-z]{1}[A-Z]{2,} ").unwrap();
     static ref NOT_WORD: Regex = Regex::new(r"[^a-zA-Z]{1,}").unwrap();
 }
 
@@ -37,5 +37,8 @@ mod tests {
 
         let buffer = String::from("Hello");
         assert_eq!(analyse_str_state(buffer), BufferStatus::NothingSpecial);
+
+        let buffer = String::from("HeLLO ");
+        assert_eq!(analyse_str_state(buffer), BufferStatus::WordFinished);
     }
 }
