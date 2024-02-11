@@ -1,19 +1,38 @@
 # Caps Lock Auto Switch
 
-## Pre requisites
+Use case : as any boomer, I sometimes type while looking at the keyboard. And I end up starting sentences having the case all wrong.
 
+This small service listens to keyboard events and detects words like `hELLO `. Then the caps lock is toggled and the word is retyped.
+
+This package is written in Rust and uses [rdev](https://docs.rs/rdev/latest/rdev/) crate. It won't work with Wayland windowing system.
+
+> [!WARNING]  
+> 🚧 Debian package under construction
+
+## Dev
+
+Pre requisites:
+
+```bash
+sudo apt-get install libx11-dev xorg-dev libxdo-dev
 ```
-install libx11-dev  xorg-dev libxdo-dev
+
+Run:
+
+```bash
+cargo run
 ```
+
+## Test
+
+Only tried on Pop!_OS 22.04 LTS. Sould work on any Debian based distri with X11.
 
 ## TODO
 
-- [ ] check install on a clean system with docker
+- [ ] check install/remove, upgrade on a clean system
 - [ ] only define project variable once : description version..
-- [ ] manage languages special charaters
-- [ ] Writre readme
-- [ ] licence file
-
-## Notes
-
-https://betterprogramming.pub/how-to-create-a-basic-debian-package-927be001ad80
+- [ ] manage languages special characters
+- [ ] debian package lint warnings
+- [ ] CI, lint, make package
+- [ ] install instructions
+- [ ] readme badges
