@@ -9,6 +9,13 @@ PKG_NAME="${PACKAGE_NAME}_${VERSION}-${REVISION}_all"
 
 echo "Start building debian package..."
 
+echo "Compress changelog..."
+gzip -c -9 ./changelog > ./capslock-auto-switch/usr/share/doc/capslock-auto-switch/changelog.gz
+
+echo "Copy license file..."
+cp ./LICENSE ./capslock-auto-switch/usr/share/doc/capslock-auto-switch/copyright
+
+echo "sudo to get files ownership right..."
 SPECIAL_OWNER=$(ls -alF ./capslock-auto-switch/usr | grep -Ei ' ./' | awk '{print $3}')
 if [ "$SPECIAL_OWNER" != "root" ]; then
     sudo chown -R root:root ./capslock-auto-switch/usr
@@ -31,4 +38,9 @@ dpkg-deb --build -Z xz ./$PACKAGE_NAME
 mv $PACKAGE_NAME.deb $PKG_NAME.deb
 
 echo "check with lintian..."
+set +e
 docker run -it -v ./$PKG_NAME.deb:/app/$PKG_NAME.deb nouchka/lintian -c /app/$PKG_NAME.deb -v
+
+echo "set back file ownership to $SPECIAL_OWNER..."
+sudo chown -R $SPECIAL_OWNER:$SPECIAL_OWNER ./capslock-auto-switch/usr
+sudo chown -R $SPECIAL_OWNER:$SPECIAL_OWNER ./capslock-auto-switch/etc
