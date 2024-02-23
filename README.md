@@ -25,7 +25,7 @@ cargo run
 
 ## Test
 
-Only tried on Pop!_OS 22.04 LTS. Sould work on any Debian based distri with X11.
+Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11.
 
 ## TODO
 
@@ -33,6 +33,9 @@ Only tried on Pop!_OS 22.04 LTS. Sould work on any Debian based distri with X11.
 - [ ] only define project variable once : description version..
 - [ ] manage languages special characters
 - [ ] debian package lint warnings
+- [ ] release
 - [ ] CI, lint, make package
 - [ ] install instructions
 - [ ] readme badges
+- [ ] man / 
+- [ ] commands : help, edit coniguration...
