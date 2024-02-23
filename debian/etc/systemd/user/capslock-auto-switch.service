@@ -1,0 +1,9 @@
+[Unit]
+Description=Auto switch capslock
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/capslock-auto-switch
+
+[Install]
+WantedBy=multi-user.target
