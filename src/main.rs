@@ -20,7 +20,7 @@ lazy_static! {
     static ref CONFIG: config::Config = match config::get_config() {
         Ok(cfg) => cfg,
         Err(_) => {
-            print!("Error loading config, using default");
+            println!("Error loading config, using default");
             config::Config::default()
         }
     };
