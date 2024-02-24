@@ -47,9 +47,11 @@ rm -f ${PKG_NAME}.deb
 sudo dpkg-deb --build -Z xz ./${DEBIAN_FOLDER}
 mv ${DEBIAN_FOLDER}.deb ${PKG_NAME}.deb
 
-echo "🗹 check with lintian..."
-set +e
-docker run -it -v ./${PKG_NAME}.deb:/app/${PKG_NAME}.deb nouchka/lintian -c /app/${PKG_NAME}.deb -v
+if [ $1 == "--lint" ]; then
+    echo "🗹 check with lintian..."
+    set +e
+    docker run -it -v ./${PKG_NAME}.deb:/app/${PKG_NAME}.deb nouchka/lintian -c /app/${PKG_NAME}.deb -v
+fi
 
 sudo chown $SPECIAL_OWNER:$SPECIAL_OWNER ./${DEBIAN_FOLDER}/etc/systemd/user
 echo "🎉 Done! 🎉"

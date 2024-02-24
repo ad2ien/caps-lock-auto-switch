@@ -23,6 +23,14 @@ Run:
 cargo run
 ```
 
+## Build debian package
+
+```bash
+./debian-build.sh --lint 
+```
+
+Off course lint arg is optional
+
 ## Test
 
 Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11.
