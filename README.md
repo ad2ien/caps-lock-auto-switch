@@ -50,3 +50,4 @@ Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11
 - [ ] man page
 - [ ] commands : help, edit configuration...
 - [ ] dockerize build
+- [ ] logs

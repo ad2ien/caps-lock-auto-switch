@@ -1,0 +1,10 @@
+#!/bin/bash
+set +e
+
+echo "Post remove script of capslock-auto-switch: $1"
+systemctl --machine="$SUDO_USER@.host" --user stop capslock-auto-switch
+systemctl --machine="$SUDO_USER@.host" --user disable capslock-auto-switch
+systemctl --machine="$SUDO_USER@.host" --user daemon-reload
+
+rm -f /etc/xdg/systemd/user/capslock-auto-switch.service
+rm -f /etc/systemd/user/capslock-auto-switch.service
