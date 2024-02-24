@@ -1,4 +1,4 @@
 /target
 /.idea
-debian/usr/
+debian/usr/*
 capslock-auto-switch_*.deb
