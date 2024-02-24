@@ -37,9 +37,10 @@ Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11
 
 ## TODO
 
-- [ ] uninstall should remove service
+- [x] uninstall should remove service
+- [x] config file for a debian package?
+- [ ] commands : help, edit configuration...
 - [ ] check install/remove, upgrade on a clean system
-- [ ] config file for a debian package
 - [ ] only define project variable once : description version..
 - [ ] manage languages special characters
 - [ ] debian package lint warnings
@@ -48,6 +49,5 @@ Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11
 - [ ] install instructions
 - [ ] readme badges
 - [ ] man page
-- [ ] commands : help, edit configuration...
 - [ ] dockerize build
 - [ ] logs

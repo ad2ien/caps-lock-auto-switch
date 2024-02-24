@@ -4,6 +4,7 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+dirs = "5.0.1"
 lazy_static = "1.4.0"
 notify-rust = "4.10.0"
 rdev = "0.5.3"

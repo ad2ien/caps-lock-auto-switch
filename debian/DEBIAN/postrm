@@ -8,3 +8,4 @@ systemctl --machine="$SUDO_USER@.host" --user daemon-reload
 
 rm -f /etc/xdg/systemd/user/capslock-auto-switch.service
 rm -f /etc/systemd/user/capslock-auto-switch.service
+rm -rf /home/$SUDO_USER/.config/capslock-auto-switch

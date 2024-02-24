@@ -1,9 +1,9 @@
 use lazy_static::lazy_static;
-use std::{env, path::PathBuf, sync::RwLock, thread, time};
+use std::{sync::RwLock, thread, time};
 
+use buffer_process::{analyse_str_state, BufferStatus};
 use notify_rust::Notification;
 use rdev::{listen, simulate, Event, EventType, Key};
-use buffer_process::{analyse_str_state, BufferStatus};
 use state::InitCell;
 
 mod buffer_process;
@@ -12,11 +12,6 @@ mod config;
 static STATE: InitCell<RwLock<CapsLockAutoSwitchState>> = InitCell::new();
 
 lazy_static! {
-    #[derive(Debug)]
-    static ref CURRENT_EXE: PathBuf = match env::current_exe() {
-             Ok(exe_path) => exe_path,
-             Err(_e) => PathBuf::from(""),
-         };
     static ref CONFIG: config::Config = match config::get_config() {
         Ok(cfg) => cfg,
         Err(_) => {
@@ -24,7 +19,6 @@ lazy_static! {
             config::Config::default()
         }
     };
-
 }
 
 struct SingleEvent {
@@ -51,13 +45,7 @@ impl CapsLockAutoSwitchState {
 
 fn main() {
     println!("Start Caps-Lock Auto Switch!");
-    println!(
-        "Current exe: {}",
-        match CURRENT_EXE.to_str() {
-            Some(s) => s,
-            None => "unknown",
-        }
-    );
+    println!("Config path: {}", CONFIG.path);
 
     let state = CapsLockAutoSwitchState::new();
     STATE.set(RwLock::new(state));
@@ -108,7 +96,6 @@ fn analyse_state() -> BufferStatus {
     analyse_str_state(state.to_string())
 }
 
-
 fn reset_buffer() {
     println!("reset buffer");
     match STATE.get().try_write() {
@@ -130,19 +117,12 @@ fn do_notification() {
     let state = STATE.get().read().unwrap();
     let template_message = ": are you sure about the case of this word?";
 
-    let message = match CURRENT_EXE.to_str() {
-        Some(s) => {
-            format!(
-                "{}{}\nYou can change the settings there : {}/config.yaml",
-                state.to_string(),
-                template_message,
-                s
-            )
-        }
-        None => {
-            format!("{}{}", template_message, state.to_string())
-        }
-    };
+    let message = format!(
+        "{}{}\nYou can change the settings there : {}",
+        state.to_string(),
+        template_message,
+        CONFIG.path
+    );
 
     Notification::new()
         .summary("Wrong case detected!")
