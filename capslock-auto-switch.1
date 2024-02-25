@@ -1,0 +1,27 @@
+.TH capslock-auto-switch
+
+.SH NAME
+.B capslock-auto-switch
+
+.SH SYNOPSIS
+.B capslock_auto_switch
+Switches capslock and rewrites the last word when a capslock inversion is detected. A notification is displayed when it happens. 
+
+.SH DESCRIPTION
+
+Use case : as any boomer, I sometimes type while looking at the keyboard. And I end up starting sentences having the case all wrong.
+This small service listens to keyboard events and detects words like `hELLO `. Then the caps lock is toggled and the word is retyped.
+This package is written in Rust and uses [rdev](https://docs.rs/rdev/latest/rdev/) crate. It won't work with Wayland windowing system.
+
+.SH CONFIGURATION
+
+It there's no problem, a configuration file is created in user config folder e.g.
+.IR /home/[USER]/.config/capslock-auto-switch/config.yml
+
+This file can be edited to adjust the the service behavior. Here's the settings, you'll find:
+
+.nf
+correct_caps_lock: true
+correct_suspicious_last_word: true
+display_warning: true
+.fi
