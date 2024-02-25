@@ -11,14 +11,18 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+
       - name: Install dependencies
         run: sudo apt-get update && sudo apt-get install -y libx11-dev xorg-dev libxdo-dev
 
-      - name: install toolchain
+      - name: Install toolchain
         uses: dtolnay/rust-toolchain@stable
 
-      - name: cargo test
+      - name: Cargo test
         run: cargo test
 
-      - name: cargo build
+      - name: Cargo build
         run: cargo build --release
+
+      - name: Create debian package
+        run: ./debian-build.sh
