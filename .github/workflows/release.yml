@@ -1,0 +1,50 @@
+name: release
+
+on:
+  release:
+    types: [created]
+
+jobs:
+  prepare-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - uses: nowsprinting/check-version-format-action@v3
+        id: version
+        with:
+          prefix: "v"
+
+      - name: Replace tag
+        run: |
+          TAG=${{ steps.version.outputs.full }}
+          echo "Replacing tag with $TAG"
+          sed -i "s/^\(version\s*=\s*\"\).*\(\".*\)$/\1$TAG\2/" "Cargo.lock"
+          sed -i "s/^\(VERSION\s*=\s*\"\).*\(\".*\)$/\1$TAG\2/" "debian-build.sh"
+          sed -i "s/^\(Version\s*:\s*\).*\(.*\)$/\1$TAG\2/" "debian/DEBIAN/control"
+
+  build:
+    if: github.ref == 'refs/heads/main'
+    needs: prepare-release
+    uses: ./.github/workflows/build.yml
+
+  release:
+    runs-on: ubuntu-latest
+    needs:
+      - build
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          message: "🔖 auto update version 🤖"
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Release Asset
+        uses: softprops/action-gh-release@v1
+        with:
+          files: capslock*.deb
