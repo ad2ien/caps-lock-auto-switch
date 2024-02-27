@@ -5,38 +5,37 @@ on:
     types: [created]
 
 jobs:
-  prepare-release:
+  build-ok:
+    uses: ./.github/workflows/build.yml
+
+  build-asset-release:
     runs-on: ubuntu-latest
+    needs: build-ok
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - uses: nowsprinting/check-version-format-action@v3
+      - uses: nowsprinting/check-version-format-action@v4.0.1
         id: version
         with:
           prefix: "v"
 
       - name: Replace tag
         run: |
-          TAG=${{ steps.version.outputs.full }}
+          TAG=${{ steps.version.outputs.full_without_prefix }}
           echo "Replacing tag with $TAG"
-          sed -i "s/^\(version\s*=\s*\"\).*\(\".*\)$/\1$TAG\2/" "Cargo.lock"
+          sed -i "s/^\(version\s*=\s*\"\).*\(\".*\)$/\1$TAG\2/" "Cargo.toml"
           sed -i "s/^\(VERSION\s*=\s*\"\).*\(\".*\)$/\1$TAG\2/" "debian-build.sh"
           sed -i "s/^\(Version\s*:\s*\).*\(.*\)$/\1$TAG\2/" "debian/DEBIAN/control"
 
-  build:
-    if: github.ref == 'refs/heads/main'
-    needs: prepare-release
-    uses: ./.github/workflows/build.yml
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev xorg-dev libxdo-dev
 
-  release:
-    runs-on: ubuntu-latest
-    needs:
-      - build
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+      - name: Create debian package
+        run: ./debian-build.sh
 
       - name: Commit & Push changes
         uses: actions-js/push@master
