@@ -20,14 +20,14 @@ mkdir -p ${DEBIAN_FOLDER}/usr/bin
 mkdir -p ${DEBIAN_FOLDER}/usr/share/man/man1
 
 echo "🗞️ Compress changelog..."
-gzip -c -9 ./changelog > ./${DEBIAN_FOLDER}/usr/share/doc/${BINARY_NAME}/changelog.gz
+gzip -c -n -9 ./changelog > ./${DEBIAN_FOLDER}/usr/share/doc/${BINARY_NAME}/changelog.gz
 
 echo "🖨️ Copy files..."
 cp ./LICENSE ./${DEBIAN_FOLDER}/usr/share/doc/${BINARY_NAME}/copyright
 
 echo "📝 Make man..."
 # docker run --rm -v $(pwd):/working -w /working pandoc/minimal:3 --to man man.md -o capslock-auto-switch.1
-gzip -c -9 ./capslock-auto-switch.1 > ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
+gzip -c -n -9 ./capslock-auto-switch.1 > ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
 
 echo "🧪 run tests..."
 cargo test
