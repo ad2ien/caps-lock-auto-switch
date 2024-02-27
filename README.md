@@ -39,15 +39,21 @@ Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11
 
 - [x] uninstall should remove service
 - [x] config file for a debian package?
+- [x] man page
+- [ ] release
+  - [ ] write changelog and commit
+  - [ ] create release / tag. CI does:
+    - [ ] replace versions with tag name : Cargo.toml, in debian script
+    - [ ] bot commit
+    - [ ] build and set deb as asset
+- [ ] CI lint
+- [ ] install instructions
+- [ ] readme badges
 - [ ] commands : help, edit configuration...
 - [ ] check install/remove, upgrade on a clean system
 - [ ] only define project variable once : description version..
 - [ ] manage languages special characters
 - [ ] debian package lint warnings
-- [ ] release
-- [ ] CI, lint, make package
-- [ ] install instructions
-- [ ] readme badges
-- [ ] man page
 - [ ] dockerize build
 - [ ] logs
+- [ ] docker image project for dch
