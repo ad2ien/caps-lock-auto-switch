@@ -1,3 +1,11 @@
-capslock-auto-switch (0.1-1) unstable; urgency=low                     
-  * Initial release.                                            
-  -- ad2ien <contact@ad2ien.dev>  Tue, 07 Feb 2024 21:08:35 +0100      
+capslock-auto-switch (0.2.0) UNRELEASED; urgency=medium
+
+  * improve debian package
+
+ -- ad2ien <contact@ad2ien.dev>  Tue, 27 Feb 2024 18:35:53 +0100
+
+capslock-auto-switch (0.1.0) unstable; urgency=medium
+
+  * Initial release
+
+ -- ad2ien <contact@ad2ien.dev>  Tue, 07 Feb 2024 21:08:35 +0100
