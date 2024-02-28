@@ -3,7 +3,7 @@ set -e
 
 DEBIAN_FOLDER="debian"
 BINARY_NAME="capslock-auto-switch"
-VERSION="0.1.0"
+VERSION="0.2.0"
 REVISION="1"
 PKG_NAME="${BINARY_NAME}_${VERSION}-${REVISION}_all"
 
