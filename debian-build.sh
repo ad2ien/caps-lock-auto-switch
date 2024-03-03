@@ -27,7 +27,7 @@ cp ./LICENSE ./${DEBIAN_FOLDER}/usr/share/doc/${BINARY_NAME}/copyright
 
 echo "📝 Make man..."
 # docker run --rm -v $(pwd):/working -w /working pandoc/minimal:3 --to man man.md -o capslock-auto-switch.1
-gzip -c -n -9 ./capslock-auto-switch.1 > ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
+gzip -c -n -9 ./debian-scripts/man.1 > ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
 
 echo "🦀 run build..."
 cargo build --release
