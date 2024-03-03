@@ -52,10 +52,6 @@ Only tried on Pop!_OS 22.04 LTS. Should work on any Debian based distri with X11
 
 ## TODO
 
-- [x] uninstall should remove service
-- [x] config file for a debian package?
-- [x] man page
-- [ ] CI lint
 - [ ] debian package lint warnings
 - [ ] remove test from build script
 - [ ] readme badges rust & lint

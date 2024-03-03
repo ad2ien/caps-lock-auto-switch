@@ -29,8 +29,6 @@ echo "📝 Make man..."
 # docker run --rm -v $(pwd):/working -w /working pandoc/minimal:3 --to man man.md -o capslock-auto-switch.1
 gzip -c -n -9 ./capslock-auto-switch.1 > ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
 
-echo "🧪 run tests..."
-cargo test
 echo "🦀 run build..."
 cargo build --release
 strip target/release/$BINARY_NAME
