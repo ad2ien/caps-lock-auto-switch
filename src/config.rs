@@ -18,7 +18,7 @@ impl Config {
             correct_caps_lock: true,
             correct_suspicious_last_word: true,
             display_warning: true,
-            path: String::new()
+            path: String::new(),
         }
     }
     pub fn default_with_path(path: String) -> Config {
@@ -26,7 +26,7 @@ impl Config {
             correct_caps_lock: true,
             correct_suspicious_last_word: true,
             display_warning: true,
-            path: path
+            path: path,
         }
     }
 }
@@ -36,7 +36,7 @@ pub fn get_config() -> Result<Config, Box<dyn std::error::Error>> {
         config_dir.push("capslock-auto-switch");
         let _ = fs::create_dir_all(config_dir.clone());
         config_dir.push("config.yml");
-        println!("Config directory should be: {:?}", config_dir); 
+        println!("Config directory should be: {:?}", config_dir);
 
         let file = File::open(config_dir.clone());
         match file {
@@ -47,7 +47,10 @@ pub fn get_config() -> Result<Config, Box<dyn std::error::Error>> {
                 Ok(config)
             }
             Err(_) => {
-                println!("Creating default config file {}", config_dir.clone().to_str().unwrap());
+                println!(
+                    "Creating default config file {}",
+                    config_dir.clone().to_str().unwrap()
+                );
                 let config = Config::default_with_path(config_dir.to_str().unwrap().to_string());
                 let ff = File::create(config_dir.clone());
                 match ff {
@@ -57,12 +60,11 @@ pub fn get_config() -> Result<Config, Box<dyn std::error::Error>> {
                         file.write_all(contents.as_bytes())?;
                         Ok(config)
                     }
-                    Err( err ) => {
+                    Err(err) => {
                         println!("Unable to create config file {:?}", err);
                         Ok(Config::default())
                     }
-                    
-                } 
+                }
             }
         }
     } else {
