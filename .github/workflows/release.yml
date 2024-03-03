@@ -5,6 +5,8 @@ on:
     types: [created]
 
 jobs:
+  lint:
+    uses: ./.github/workflows/lint.yml
   build-ok:
     uses: ./.github/workflows/build.yml
 
