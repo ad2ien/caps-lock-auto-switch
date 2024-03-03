@@ -6,8 +6,7 @@ lazy_static! {
     static ref NOT_WORD: Regex = Regex::new(r"[^a-zA-Z]{1,}").unwrap();
 }
 
-#[derive(PartialEq)]
-#[derive(Debug)]
+#[derive(PartialEq, Debug)]
 pub enum BufferStatus {
     NothingSpecial,
     WordFinished,
