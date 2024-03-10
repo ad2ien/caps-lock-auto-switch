@@ -3,7 +3,7 @@
 ![Rust](https://img.shields.io/badge/Rust-000000?logo=rust&logoColor=white)
 ![Debian](https://img.shields.io/badge/Debian-A81D33?logo=debian&logoColor=white)
 ![GitHub Release Status](https://img.shields.io/github/actions/workflow/status/ad2ien/caps-lock-auto-switch/release.yml?label=release&logo=github&branch=main)
-![GitHub Build Status](https://img.shields.io/github/actions/workflow/status/ad2ien/caps-lock-auto-switch/build.yml?label=build&logo=github&branch=main)
+![GitHub Build Lint Status](https://img.shields.io/github/actions/workflow/status/ad2ien/caps-lock-auto-switch/lint-build.yml?label=build&logo=github&branch=main)
 ![License](https://img.shields.io/badge/license-GPL%202%2B%202.0-blue.svg)
 ![Gitmoji](https://img.shields.io/badge/gitmoji-%20%F0%9F%98%9C%20%F0%9F%98%8D-FFDD67.svg)
 
