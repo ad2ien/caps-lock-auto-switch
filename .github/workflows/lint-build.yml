@@ -1,0 +1,58 @@
+name: Build debian package
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_call:
+
+jobs:
+  lint-markdown:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Lint markdown files
+        uses: avto-dev/markdown-lint@v1.5.0
+        with:
+          args: "**/*.md"
+
+  lint-yaml:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Lint yaml files
+        uses: ibiqlik/action-yamllint@v3.1.1
+
+  build-package:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: sudo apt-get update && sudo apt-get install -y libx11-dev xorg-dev libxdo-dev
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Cargo lint
+        run: cargo fmt --all -- --check
+
+      - name: Cargo test
+        run: cargo test
+
+      - name: Cargo build
+        run: cargo build --release
+
+      - name: Create debian package
+        run: ./debian-build.sh
+
+      - name: Lint debian package
+        run: |
+          sudo apt-get install -y lintian
+          lintian capslock-auto-switch_*_all.deb
