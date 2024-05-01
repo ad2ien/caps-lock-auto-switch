@@ -7,5 +7,6 @@ Architecture: amd64
 Maintainer: Adrien Touzouli <contact@ad2ien.dev>
 Depends: libc6, libx11-dev, libxdo-dev
 Description: Auto switch capslock
-  Listen to keyboard events, if a caps inversion is detected at the beginning of a sentence
-  caps lock is inverted and word is corrected.
+ Listen to keyboard events, if a caps inversion 
+ is detected at the beginning of a sentence
+ caps lock is inverted and word is corrected.
