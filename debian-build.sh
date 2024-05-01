@@ -42,6 +42,7 @@ if [ "$SPECIAL_OWNER" != "root" ]; then
 fi
 sudo chmod -R 755 ./${DEBIAN_FOLDER}/usr
 sudo chmod -R 755 ./${DEBIAN_FOLDER}/etc
+sudo chmod -x ./${DEBIAN_FOLDER}/etc/systemd/user/capslock-auto-switch.service
 sudo chmod -R 755 ./${DEBIAN_FOLDER}/usr/share/
 sudo chmod 644 ./${DEBIAN_FOLDER}/usr/share/doc/${BINARY_NAME}/*
 sudo chmod a-x ./${DEBIAN_FOLDER}/usr/share/man/man1/capslock-auto-switch.1.gz
@@ -57,7 +58,7 @@ if [ "$1" = "--lint" ]; then
     docker run --rm -it -v ./${PKG_NAME}.deb:/app/${PKG_NAME}.deb nouchka/lintian -c /app/${PKG_NAME}.deb -v
 fi
 
-sudo chown $SPECIAL_OWNER:$SPECIAL_OWNER ./${DEBIAN_FOLDER}/etc/systemd/user
+sudo chown -R $SPECIAL_OWNER:$SPECIAL_OWNER ./${DEBIAN_FOLDER}/etc
 sudo chown -R $SPECIAL_OWNER:$SPECIAL_OWNER ./${DEBIAN_FOLDER}/usr
 
 echo "🎉 Done! 🎉"
